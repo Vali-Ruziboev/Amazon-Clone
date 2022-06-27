@@ -25,6 +25,8 @@ const Product = ({ id, title, price, description, category, image }) => {
       description,
       category,
       image,
+      rating,
+      hasPrime
     };
 
     dispatch(addToBasket(product))
@@ -51,7 +53,7 @@ const Product = ({ id, title, price, description, category, image }) => {
       <p className="text-xs my-2 line-clamp-2">{description}</p>
 
       <div className="mb-5">
-        <Currency quantity={price} currency="GBP" />
+        <Currency quantity={price} />
       </div>
 
       {hasPrime && (
