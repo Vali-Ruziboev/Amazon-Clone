@@ -35,7 +35,7 @@ const CheckoutProduct = ({
     dispatch(removeFromBasket({id}))
   }
   return (
-    <div className="gird grid-cols-5">
+    <div className="grid grid-cols-5">
       <Image src={image} height={200} width={200} objectFit="contain" />
 
       {/* Middle */}
