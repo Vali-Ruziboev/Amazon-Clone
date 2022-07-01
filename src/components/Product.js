@@ -26,10 +26,10 @@ const Product = ({ id, title, price, description, category, image }) => {
       category,
       image,
       rating,
-      hasPrime
+      hasPrime,
     };
 
-    dispatch(addToBasket(product))
+    dispatch(addToBasket(product));
   };
 
   return (
