@@ -1,14 +1,18 @@
 import { buffer } from "micro";
 import * as admin from "firebase-admin";
+import { addDoc, collection } from "firebase/firestore";
+import { initializeApp, apps, app, credential, firestore, } from "firebase-admin";
+import { getDatabase, ref, set } from "firebase/database";
 
 // Secure a connection to FIREBASE from the backend
 const serviceAccount = require("../../../permission.json");
 
-const app = !admin.apps.length
-  ? admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+const appp = !apps.length
+  ? initializeApp({
+      credential: credential.cert(serviceAccount),
     })
-  : admin.app();
+  : app();
+const db = getDatabase(appp)
 
 // Establish connection to Stripe
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -16,21 +20,27 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
 
 const fulfillOrder = async (session) => {
-  return app
-    .firestore()
-    .collection("users")
-    .doc(session.metadata.email)
-    .collection("orders")
-    .doc(session.id)
-    .set({
+  return set(ref(db, 'users/' + session.metadata.email + 'orders/' + session.id ), {
       amount: session.amount_total / 100,
       amount_shipping: session.total_details.amount_shipping / 100,
       images: JSON.parse(session.metadata.images),
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    })
-    .then(() => {
-      console.log(`SUCCESS: Order ${session.id} had been added to the DB`);
-    });
+      timestamp: firestore.FieldValue.serverTimestamp(),
+  })
+  // return app
+  //   .firestore()
+  //   .collection("users")
+  //   .doc(session.metadata.email)
+  //   .collection("orders")
+  //   .doc(session.id)
+  //   .set({
+  //     amount: session.amount_total / 100,
+  //     amount_shipping: session.total_details.amount_shipping / 100,
+  //     images: JSON.parse(session.metadata.images),
+  //     timestamp: admin.firestore.FieldValue.serverTimestamp(),
+  //   })
+  //   .then(() => {
+  //     console.log(`SUCCESS: Order ${session.id} had been added to the DB`);
+  //   });
 };
 
 export default async (req, res) => {
